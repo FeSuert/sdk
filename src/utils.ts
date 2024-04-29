@@ -60,41 +60,36 @@ export function registerPortHandlers(termName, instance) {
   var self = this;
   // Attach block actions
   var actions = document.querySelectorAll('[data-term*="' + termName + '"]');
-  for (var n = 0; n < actions.length; ++n) {
-    var anchor = actions[n];
+  actions.forEach(function(anchor) {
     var port = anchor.getAttribute("data-port");
     var protocol = anchor.getAttribute("data-protocol") || "http:";
-    var link;
+    
     if (port) {
-      link =
-        protocol +
-        "//" +
-        instance.proxy_host +
-        "-" +
-        port +
-        ".direct." +
-        self.opts.baseUrl.split("/")[2] +
-        anchor.getAttribute("href");
-    }
-    var openFn = function (link) {
-      return function (evt) {
+      var link = protocol +
+                 "//" +
+                 instance.proxy_host +
+                 "-" +
+                 port +
+                 ".direct." +
+                 self.opts.baseUrl.split("/")[2] +
+                 anchor.getAttribute("href");
+
+      anchor.addEventListener("click", function (evt) {
         evt.preventDefault();
         if (link) {
           window.open(link, "_blank");
         }
-      };
-    };
-    anchor.addEventListener("click", function () {
-      openFn(link);
-    });
-    // anchor.onauxclick = openFn(link);
-    anchor.addEventListener("contextmenu", function () {
-      if (link) {
-        this.setAttribute("href", link);
-      }
-    });
-  }
+      });
+
+      anchor.addEventListener("contextmenu", function () {
+        if (link) {
+          this.setAttribute("href", link);
+        }
+      });
+    }
+  });
 }
+
 
 export function sendRequest(req, callback) {
   var request = new XMLHttpRequest();
